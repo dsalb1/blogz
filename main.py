@@ -19,9 +19,13 @@ class BlogHandler(webapp2.RequestHandler):
             Get all posts by a specific user, ordered by creation date (descending).
             The user parameter will be a User object.
         """
+        user_id = str(user.key().id())
 
         # TODO - filter the query so that only posts by the given user
-        return None
+        q = db.GqlQuery("SELECT * FROM Post WHERE author = '%s'" % user_id)
+        return q.fetch(limit=limit,offset=offset)
+    
+        
 
     def get_user_by_name(self, username):
         """ Get a user object from the db, based on their username """
@@ -90,8 +94,12 @@ class BlogIndexHandler(BlogHandler):
         if username:
             user = self.get_user_by_name(username)
             posts = self.get_posts_by_user(user, self.page_size, offset)
+            user_query = user
         else:
             posts = self.get_posts(self.page_size, offset)
+            user_query = User.all()
+            user_query = user_query.get()
+
 
         # determine next/prev page numbers for navigation links
         if page > 1:
@@ -112,7 +120,8 @@ class BlogIndexHandler(BlogHandler):
                     page_size=self.page_size,
                     prev_page=prev_page,
                     next_page=next_page,
-                    username=username)
+                    user_query=user_query              
+                    )
         self.response.out.write(response)
 
 class NewPostHandler(BlogHandler):
@@ -130,6 +139,7 @@ class NewPostHandler(BlogHandler):
         """ Create a new blog post if possible. Otherwise, return with an error message """
         title = self.request.get("title")
         body = self.request.get("body")
+        user = self.read_secure_cookie("user_id")
 
         if title and body:
 
@@ -137,7 +147,7 @@ class NewPostHandler(BlogHandler):
             post = Post(
                 title=title,
                 body=body,
-                author=self.user)
+                author=user)
             post.put()
 
             # get the id of the new post, so we can render the post's page (via the permalink)
@@ -153,9 +163,11 @@ class ViewPostHandler(BlogHandler):
         """ Render a page with post determined by the id (via the URL/permalink) """
 
         post = Post.get_by_id(int(id))
+        user = User.get_by_id(int(post.author))
+
         if post:
             t = jinja_env.get_template("post.html")
-            response = t.render(post=post)
+            response = t.render(post=post, user=user)
         else:
             error = "there is no post with id %s" % id
             t = jinja_env.get_template("404.html")
@@ -229,7 +241,7 @@ class SignupHandler(BlogHandler):
 
             # create new user object and store it in the database
             pw_hash = hashutils.make_pw_hash(username, password)
-            user = User(username=username, pw_hash=pw_hash)
+            user = User(username=username, pw_hash=pw_hash, email=email)
             user.put()
 
             # login our new user

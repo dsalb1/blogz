@@ -56,6 +56,14 @@ hr {
     font-size: 12px;
 }
 
+.navigation {
+    display: inline-block;
+}
+
+nav #nav {
+    float:left;
+}
+
 nav ul {
     padding: 0;
     display: inline-block;
