@@ -56,13 +56,6 @@ hr {
     font-size: 12px;
 }
 
-.navigation {
-    display: inline-block;
-}
-
-nav #nav {
-    float:left;
-}
 
 nav ul {
     padding: 0;
@@ -75,6 +68,10 @@ nav ul li {
     margin-right: 15px;
 }
 
-nav #user-account {
-    float: right;
+
+#blog {
+    float:left;
+}
+#registration {
+    float:right;
 }
