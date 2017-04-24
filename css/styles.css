@@ -2,7 +2,7 @@ body {
     font-family: sans-serif;
     width: 800px;
     margin: 0 auto;
-    padding: 10px;
+    padding: 0px
 }
 
 .error {
@@ -56,10 +56,38 @@ hr {
     font-size: 12px;
 }
 
+#index-username a {
+    text-decoration: none;
+    font-size:20px;
+}
+
+#index-username a:hover {
+    color:orange;
+}
+
+h1 {
+    margin-top:10px;
+    margin-left:10px;
+}
+
+nav {
+    background-color:#1f72a3;
+    height:80px;
+}
+
+nav a {
+    text-decoration:none;
+    color:white;
+}
+
+nav a:hover {
+    color:orange;
+}
 
 nav ul {
     padding: 0;
     display: inline-block;
+    margin-left:15px;
 }
 
 nav ul li {
@@ -68,10 +96,7 @@ nav ul li {
     margin-right: 15px;
 }
 
-
-#blog {
-    float:left;
-}
 #registration {
     float:right;
 }
+
